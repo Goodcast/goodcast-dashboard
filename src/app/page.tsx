@@ -1,132 +1,14 @@
+import Link from "next/link";
+
 const members = [
-  {
-    name: "岡村",
-    phase: "収穫期",
-    calls: 46,
-    contacts: 25,
-    contactRate: 54.3,
-    apptGained: 9,
-    apptDone: 21,
-    orders: 13,
-    companies: 22,
-    activeWorkers: 56,
-    newHires: 5,
-    resignations: 2,
-    prospects: 31,
-    status: "green" as const,
-  },
-  {
-    name: "榊原",
-    phase: "成長期",
-    calls: 516,
-    contacts: 109,
-    contactRate: 21.1,
-    apptGained: 5,
-    apptDone: 12,
-    orders: 3,
-    companies: 12,
-    activeWorkers: 31,
-    newHires: 3,
-    resignations: 0,
-    prospects: 30,
-    status: "yellow" as const,
-  },
-  {
-    name: "玉木",
-    phase: "成長期",
-    calls: 236,
-    contacts: 46,
-    contactRate: 19.5,
-    apptGained: 8,
-    apptDone: 12,
-    orders: 4,
-    companies: 10,
-    activeWorkers: 26,
-    newHires: 0,
-    resignations: 0,
-    prospects: 12,
-    status: "green" as const,
-  },
-  {
-    name: "中野",
-    phase: "成長期",
-    calls: 408,
-    contacts: 70,
-    contactRate: 17.2,
-    apptGained: 8,
-    apptDone: 15,
-    orders: 0,
-    companies: 9,
-    activeWorkers: 17,
-    newHires: 2,
-    resignations: 0,
-    prospects: 22,
-    status: "red" as const,
-  },
-  {
-    name: "田中",
-    phase: "種まき期",
-    calls: 1215,
-    contacts: 182,
-    contactRate: 15.0,
-    apptGained: 16,
-    apptDone: 14,
-    orders: 0,
-    companies: 0,
-    activeWorkers: 0,
-    newHires: 0,
-    resignations: 0,
-    prospects: 2,
-    status: "yellow" as const,
-  },
-  {
-    name: "長尾",
-    phase: "種まき期",
-    calls: 1411,
-    contacts: 276,
-    contactRate: 19.6,
-    apptGained: 9,
-    apptDone: 9,
-    orders: 0,
-    companies: 6,
-    activeWorkers: 10,
-    newHires: 0,
-    resignations: 0,
-    prospects: 10,
-    status: "yellow" as const,
-  },
-  {
-    name: "小川",
-    phase: "種まき期",
-    calls: 713,
-    contacts: 166,
-    contactRate: 23.3,
-    apptGained: 14,
-    apptDone: 2,
-    orders: 0,
-    companies: 0,
-    activeWorkers: 0,
-    newHires: 0,
-    resignations: 0,
-    prospects: 6,
-    status: "yellow" as const,
-  },
-  {
-    name: "塩崎",
-    phase: "種まき期",
-    calls: 1110,
-    contacts: 172,
-    contactRate: 15.5,
-    apptGained: 22,
-    apptDone: 12,
-    orders: 0,
-    companies: 0,
-    activeWorkers: 0,
-    newHires: 0,
-    resignations: 0,
-    prospects: 18,
-    status: "yellow" as const,
-  },
+  { name: "岡村", phase: "収穫期", calls: 46, contacts: 25, contactRate: 54.3, apptGained: 9, apptDone: 21, orders: 13, companies: 22, activeWorkers: 56, newHires: 5, resignations: 2, prospects: 31, status: "green" as const },
+  { name: "榊原", phase: "成長期", calls: 516, contacts: 109, contactRate: 21.1, apptGained: 5, apptDone: 12, orders: 3, companies: 12, activeWorkers: 31, newHires: 3, resignations: 0, prospects: 30, status: "yellow" as const },
+  { name: "玉木", phase: "成長期", calls: 236, contacts: 46, contactRate: 19.5, apptGained: 8, apptDone: 12, orders: 4, companies: 10, activeWorkers: 26, newHires: 0, resignations: 0, prospects: 12, status: "green" as const },
+  { name: "中野", phase: "成長期", calls: 408, contacts: 70, contactRate: 17.2, apptGained: 8, apptDone: 15, orders: 0, companies: 9, activeWorkers: 17, newHires: 2, resignations: 0, prospects: 22, status: "red" as const },
+  { name: "田中", phase: "種まき期", calls: 1215, contacts: 182, contactRate: 15.0, apptGained: 16, apptDone: 14, orders: 0, companies: 0, activeWorkers: 0, newHires: 0, resignations: 0, prospects: 2, status: "yellow" as const },
+  { name: "長尾", phase: "種まき期", calls: 1411, contacts: 276, contactRate: 19.6, apptGained: 9, apptDone: 9, orders: 0, companies: 6, activeWorkers: 10, newHires: 0, resignations: 0, prospects: 10, status: "yellow" as const },
+  { name: "小川", phase: "種まき期", calls: 713, contacts: 166, contactRate: 23.3, apptGained: 14, apptDone: 2, orders: 0, companies: 0, activeWorkers: 0, newHires: 0, resignations: 0, prospects: 6, status: "yellow" as const },
+  { name: "塩崎", phase: "種まき期", calls: 1110, contacts: 172, contactRate: 15.5, apptGained: 22, apptDone: 12, orders: 0, companies: 0, activeWorkers: 0, newHires: 0, resignations: 0, prospects: 18, status: "yellow" as const },
 ];
 
 const statusIcon = { green: "🟢", yellow: "🟡", red: "🔴" };
@@ -144,24 +26,11 @@ export default function Home() {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      {/* Header */}
       <header className="bg-white border-b border-gray-200 px-6 py-4">
         <div className="max-w-7xl mx-auto flex items-center justify-between">
           <div>
-            <h1 className="text-xl font-bold text-gray-900">
-              グッドキャスト 営業成績ダッシュボード
-            </h1>
-            <p className="text-sm text-gray-500">
-              エンジニア派遣事業部 | 2026年4月度（第3週時点）
-            </p>
-          </div>
-          <div className="flex gap-2">
-            <button className="px-4 py-2 text-sm bg-gray-100 rounded-lg hover:bg-gray-200">
-              管理者設定
-            </button>
-            <button className="px-4 py-2 text-sm bg-indigo-600 text-white rounded-lg hover:bg-indigo-700">
-              AI分析
-            </button>
+            <h1 className="text-xl font-bold text-gray-900">グッドキャスト 営業成績ダッシュボード</h1>
+            <p className="text-sm text-gray-500">エンジニア派遣事業部 | 2026年4月度（第3週時点）</p>
           </div>
         </div>
       </header>
@@ -179,6 +48,7 @@ export default function Home() {
         <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
           <div className="px-6 py-4 border-b border-gray-200">
             <h2 className="text-lg font-semibold text-gray-900">チーム一覧</h2>
+            <p className="text-xs text-gray-400 mt-1">名前をクリックで個人詳細ページへ</p>
           </div>
           <div className="overflow-x-auto">
             <table className="w-full text-sm">
@@ -204,35 +74,31 @@ export default function Home() {
                   const apptRate = m.contacts > 0 ? ((m.apptGained / m.contacts) * 100).toFixed(1) : "0";
                   const orderRate = m.apptDone > 0 ? ((m.orders / m.apptDone) * 100).toFixed(1) : "0";
                   return (
-                    <tr
-                      key={m.name}
-                      className="border-t border-gray-100 hover:bg-gray-50 cursor-pointer transition-colors"
-                    >
+                    <tr key={m.name} className="border-t border-gray-100 hover:bg-indigo-50 transition-colors">
                       <td className="px-4 py-3 text-center">{statusIcon[m.status]}</td>
-                      <td className="px-4 py-3 font-semibold text-gray-900">{m.name}</td>
                       <td className="px-4 py-3">
-                        <span className={`px-2 py-1 rounded-full text-xs font-medium ${phaseColor[m.phase]}`}>
-                          {m.phase}
-                        </span>
+                        <Link
+                          href={`/member/${encodeURIComponent(m.name)}`}
+                          className="font-semibold text-indigo-600 hover:text-indigo-800 hover:underline"
+                        >
+                          {m.name}
+                        </Link>
+                      </td>
+                      <td className="px-4 py-3">
+                        <span className={`px-2 py-1 rounded-full text-xs font-medium ${phaseColor[m.phase]}`}>{m.phase}</span>
                       </td>
                       <td className="px-4 py-3 text-right tabular-nums">{m.calls.toLocaleString()}</td>
                       <td className="px-4 py-3 text-right tabular-nums">{m.contactRate}%</td>
                       <td className="px-4 py-3 text-right tabular-nums">{m.apptGained}</td>
                       <td className="px-4 py-3 text-right tabular-nums">{m.apptDone}</td>
                       <td className="px-4 py-3 text-right">
-                        <span className={`font-bold tabular-nums ${m.orders > 0 ? "text-emerald-600" : "text-gray-400"}`}>
-                          {m.orders}
-                        </span>
+                        <span className={`font-bold tabular-nums ${m.orders > 0 ? "text-emerald-600" : "text-gray-400"}`}>{m.orders}</span>
                       </td>
                       <td className="px-4 py-3 text-right tabular-nums">
-                        <span className={Number(apptRate) >= 10 ? "text-emerald-600" : "text-red-500"}>
-                          {apptRate}%
-                        </span>
+                        <span className={Number(apptRate) >= 10 ? "text-emerald-600" : "text-red-500"}>{apptRate}%</span>
                       </td>
                       <td className="px-4 py-3 text-right tabular-nums">
-                        <span className={Number(orderRate) >= 20 ? "text-emerald-600" : "text-red-500"}>
-                          {orderRate}%
-                        </span>
+                        <span className={Number(orderRate) >= 20 ? "text-emerald-600" : "text-red-500"}>{orderRate}%</span>
                       </td>
                       <td className="px-4 py-3 text-right tabular-nums">{m.companies}</td>
                       <td className="px-4 py-3 text-right tabular-nums font-medium">{m.activeWorkers}</td>
@@ -270,30 +136,10 @@ export default function Home() {
             <span className="text-xs text-gray-400 ml-2">4月 第3週</span>
           </div>
           <div className="divide-y divide-gray-100">
-            <Suggestion
-              name="岡村"
-              status="green"
-              title="成果◎ ただし新規開拓停滞リスク"
-              body="オーダー13名で月目標超過。既存深耕が機能している。一方、架電46件・新規アポ獲得2件のみ。新規パイプラインが枯渇すると半年後に影響。週1件は新規アポを入れるルール検討を。"
-            />
-            <Suggestion
-              name="田中"
-              status="yellow"
-              title="行動量◎ 商談力の強化が必要"
-              body="架電1,215件で行動量は十分。1通話75.5秒と短く、アポ→オーダー転換率0%。アポは14件獲得できているが消化も14件でオーダーに繋がっていない。岡村の商談同行を推奨。"
-            />
-            <Suggestion
-              name="中野"
-              status="red"
-              title="見込み22名がオーダーに転換できていない"
-              body="アポ消化15件でオーダー0。見込み企業は22名分あるが停滞中。提案書の質・タイミング、またはクロージング力に課題の可能性。見込みA以上の企業への提案書を上司と一緒に作成すべき。"
-            />
-            <Suggestion
-              name="塩崎"
-              status="green"
-              title="アポ獲得数チーム最多 消化ペースの改善を"
-              body="アポ獲得22件はチーム最多で種まきは順調。ただし消化率55%（12/22件）。獲得ペースに消化が追いついていない。来週はアポ消化を優先し、新規架電を一旦抑えてOK。"
-            />
+            <Suggestion name="岡村" status="green" title="成果◎ ただし新規開拓停滞リスク" body="オーダー13名で月目標超過。既存深耕が機能している。一方、架電46件・新規アポ獲得2件のみ。新規パイプラインが枯渇すると半年後に影響。週1件は新規アポを入れるルール検討を。" />
+            <Suggestion name="田中" status="yellow" title="行動量◎ 商談力の強化が必要" body="架電1,215件で行動量は十分。1通話75.5秒と短く、アポ→オーダー転換率0%。アポは14件獲得できているが消化も14件でオーダーに繋がっていない。岡村の商談同行を推奨。" />
+            <Suggestion name="中野" status="red" title="見込み22名がオーダーに転換できていない" body="アポ消化15件でオーダー0。見込み企業は22名分あるが停滞中。提案書の質・タイミング、またはクロージング力に課題の可能性。見込みA以上の企業への提案書を上司と一緒に作成すべき。" />
+            <Suggestion name="塩崎" status="green" title="アポ獲得数チーム最多 消化ペースの改善を" body="アポ獲得22件はチーム最多で種まきは順調。ただし消化率55%（12/22件）。獲得ペースに消化が追いついていない。来週はアポ消化を優先し、新規架電を一旦抑えてOK。" />
           </div>
         </div>
       </main>
@@ -301,17 +147,7 @@ export default function Home() {
   );
 }
 
-function SummaryCard({
-  label,
-  value,
-  unit,
-  color,
-}: {
-  label: string;
-  value: string | number;
-  unit: string;
-  color: string;
-}) {
+function SummaryCard({ label, value, unit, color }: { label: string; value: string | number; unit: string; color: string }) {
   const colors: Record<string, string> = {
     indigo: "bg-indigo-50 border-indigo-200 text-indigo-700",
     emerald: "bg-emerald-50 border-emerald-200 text-emerald-700",
@@ -321,30 +157,17 @@ function SummaryCard({
   return (
     <div className={`rounded-xl border p-4 ${colors[color]}`}>
       <p className="text-xs font-medium opacity-70">{label}</p>
-      <p className="text-2xl font-bold mt-1">
-        {value}
-        <span className="text-sm font-normal ml-1">{unit}</span>
-      </p>
+      <p className="text-2xl font-bold mt-1">{value}<span className="text-sm font-normal ml-1">{unit}</span></p>
     </div>
   );
 }
 
-function Suggestion({
-  name,
-  status,
-  title,
-  body,
-}: {
-  name: string;
-  status: "green" | "yellow" | "red";
-  title: string;
-  body: string;
-}) {
+function Suggestion({ name, status, title, body }: { name: string; status: "green" | "yellow" | "red"; title: string; body: string }) {
   return (
     <div className="px-6 py-4">
       <div className="flex items-center gap-2 mb-1">
         <span>{statusIcon[status]}</span>
-        <span className="font-semibold text-gray-900">{name}</span>
+        <Link href={`/member/${encodeURIComponent(name)}`} className="font-semibold text-indigo-600 hover:underline">{name}</Link>
         <span className="text-gray-600">— {title}</span>
       </div>
       <p className="text-sm text-gray-600 ml-7">{body}</p>
