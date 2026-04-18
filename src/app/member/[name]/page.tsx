@@ -3,14 +3,14 @@
 import { useParams, useRouter } from "next/navigation";
 import { useState, useEffect, useCallback } from "react";
 import { MonthSelector } from "@/components/month-selector";
-import { WeekTabs } from "@/components/week-tabs";
-import { WeeklyForm } from "@/components/weekly-form";
-import { GoalsForm } from "@/components/goals-form";
-import { ProgressBars } from "@/components/progress-bars";
-import { MonthlyManagementForm } from "@/components/monthly-management";
+import { ExcelTable } from "@/components/excel-table";
+import { AIAnalysis } from "@/components/ai-analysis";
 import { IssueForm } from "@/components/issue-form";
+import { WeekTabs } from "@/components/week-tabs";
 import {
   type MemberMonthData,
+  type MonthlyManagement,
+  type MonthlyGoals,
   emptyMemberMonth,
   emptyWeek,
   emptyIssue,
@@ -30,14 +30,12 @@ export default function MemberPage() {
   const [data, setData] = useState<MemberMonthData>(structuredClone(emptyMemberMonth));
   const [saved, setSaved] = useState(false);
 
-  // Load data
   useEffect(() => {
     const key = getStorageKey(name, month);
     const stored = localStorage.getItem(key);
     if (stored) {
       try {
         const parsed = JSON.parse(stored) as MemberMonthData;
-        // Ensure arrays have 5 elements
         while (parsed.weeks.length < 5) parsed.weeks.push({ ...emptyWeek });
         while (parsed.issues.length < 5) parsed.issues.push({ ...emptyIssue });
         setData(parsed);
@@ -49,7 +47,6 @@ export default function MemberPage() {
     }
   }, [name, month]);
 
-  // Save data
   const save = useCallback(() => {
     const key = getStorageKey(name, month);
     localStorage.setItem(key, JSON.stringify(data));
@@ -57,10 +54,9 @@ export default function MemberPage() {
     setTimeout(() => setSaved(false), 2000);
   }, [name, month, data]);
 
-  const monthLabel = (() => {
-    const [y, m] = month.split("-");
-    return `${y}年${parseInt(m)}月`;
-  })();
+  // Proxy handlers that also update goals/monthly in ExcelTable
+  const handleGoalsChange = (goals: MonthlyGoals) => setData({ ...data, goals });
+  const handleMonthlyChange = (monthly: MonthlyManagement) => setData({ ...data, monthly });
 
   if (!MEMBERS.includes(name)) {
     return (
@@ -72,21 +68,17 @@ export default function MemberPage() {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      {/* Header */}
-      <header className="bg-white border-b border-gray-200 px-6 py-4 sticky top-0 z-10">
-        <div className="max-w-5xl mx-auto flex items-center justify-between">
+      <header className="bg-white border-b border-gray-200 px-6 py-3 sticky top-0 z-10">
+        <div className="max-w-[1400px] mx-auto flex items-center justify-between">
           <div className="flex items-center gap-4">
-            <button
-              onClick={() => router.push("/")}
-              className="text-sm text-gray-500 hover:text-gray-700"
-            >
+            <button onClick={() => router.push("/")} className="text-sm text-gray-500 hover:text-gray-700">
               ← チーム一覧
             </button>
             <h1 className="text-xl font-bold text-gray-900">{name}</h1>
             <MonthSelector value={month} onChange={setMonth} />
           </div>
           <div className="flex items-center gap-3">
-            {saved && <span className="text-sm text-emerald-600">保存しました</span>}
+            {saved && <span className="text-sm text-emerald-600 animate-pulse">保存しました</span>}
             <select
               value={name}
               onChange={(e) => router.push(`/member/${encodeURIComponent(e.target.value)}`)}
@@ -98,7 +90,7 @@ export default function MemberPage() {
             </select>
             <button
               onClick={save}
-              className="px-4 py-2 text-sm bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors"
+              className="px-5 py-2 text-sm bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors font-medium"
             >
               保存
             </button>
@@ -106,56 +98,29 @@ export default function MemberPage() {
         </div>
       </header>
 
-      <main className="max-w-5xl mx-auto px-6 py-6 space-y-6">
-        {/* Section A: Goals */}
+      <main className="max-w-[1400px] mx-auto px-6 py-6 space-y-6">
+        {/* Excel-style Table */}
         <section className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
-          <h2 className="text-lg font-semibold text-gray-900 mb-4">
-            月次目標（{monthLabel}）
-          </h2>
-          <GoalsForm goals={data.goals} onChange={(g) => setData({ ...data, goals: g })} />
-        </section>
-
-        {/* Section B: Progress */}
-        <section className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
-          <h2 className="text-lg font-semibold text-gray-900 mb-4">目標 vs 実績</h2>
-          <ProgressBars goals={data.goals} weeks={data.weeks} />
-        </section>
-
-        {/* Section C: Weekly Input */}
-        <section className="bg-white rounded-xl shadow-sm border border-gray-200">
-          <div className="p-6 pb-0">
-            <h2 className="text-lg font-semibold text-gray-900 mb-4">週次データ入力</h2>
-          </div>
-          <div className="px-6">
-            <WeekTabs activeWeek={activeWeek} onChange={setActiveWeek} />
-          </div>
-          <div className="p-6">
-            <WeeklyForm
-              data={data.weeks[activeWeek]}
-              onChange={(w) => {
-                const weeks = [...data.weeks];
-                weeks[activeWeek] = w;
-                setData({ ...data, weeks });
-              }}
-            />
-          </div>
-        </section>
-
-        {/* Section D: Monthly Management */}
-        <section className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
-          <h2 className="text-lg font-semibold text-gray-900 mb-4">月次管理（稼働数・退職・入社）</h2>
-          <MonthlyManagementForm
-            data={data.monthly}
-            onChange={(m) => setData({ ...data, monthly: m })}
+          <ExcelTable
+            memberName={name}
+            month={month}
+            weeks={data.weeks}
+            goals={data.goals}
+            monthly={data.monthly}
+            onWeekChange={(i, w) => {
+              const weeks = [...data.weeks];
+              weeks[i] = w;
+              setData({ ...data, weeks });
+            }}
+            onGoalsChange={(g) => setData({ ...data, goals: g })}
+            onMonthlyChange={(m) => setData({ ...data, monthly: m })}
           />
         </section>
 
-        {/* Section E: Issues + AI */}
+        {/* Issues Section */}
         <section className="bg-white rounded-xl shadow-sm border border-gray-200">
           <div className="p-6 pb-0">
-            <h2 className="text-lg font-semibold text-gray-900 mb-4">
-              目標・結果・課題・改善案（{activeWeek + 1}週目）
-            </h2>
+            <h2 className="text-lg font-semibold text-gray-900 mb-2">目標・結果・課題・改善案</h2>
           </div>
           <div className="px-6">
             <WeekTabs activeWeek={activeWeek} onChange={setActiveWeek} />
@@ -173,6 +138,14 @@ export default function MemberPage() {
               allData={data}
             />
           </div>
+        </section>
+
+        {/* AI Analysis Chat */}
+        <section className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+          <h2 className="text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2">
+            🤖 AI数字分析・改善コーチング
+          </h2>
+          <AIAnalysis memberName={name} data={data} />
         </section>
       </main>
     </div>
