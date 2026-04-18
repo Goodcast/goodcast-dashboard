@@ -1,12 +1,11 @@
 "use client";
 
 import { useParams, useRouter } from "next/navigation";
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import { MonthSelector } from "@/components/month-selector";
 import { ExcelTable } from "@/components/excel-table";
 import { AIAnalysis } from "@/components/ai-analysis";
-import { IssueForm } from "@/components/issue-form";
-import { WeekTabs } from "@/components/week-tabs";
+import { IssueTable } from "@/components/issue-table";
 import {
   type MemberMonthData,
   type MonthlyManagement,
@@ -26,11 +25,13 @@ export default function MemberPage() {
   const now = new Date();
   const defaultMonth = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}`;
   const [month, setMonth] = useState(defaultMonth);
-  const [activeWeek, setActiveWeek] = useState(0);
   const [data, setData] = useState<MemberMonthData>(structuredClone(emptyMemberMonth));
   const [saved, setSaved] = useState(false);
+  const saveTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const isLoading = useRef(true);
 
   useEffect(() => {
+    isLoading.current = true;
     const key = getStorageKey(name, month);
     const stored = localStorage.getItem(key);
     if (stored) {
@@ -45,7 +46,21 @@ export default function MemberPage() {
     } else {
       setData(structuredClone(emptyMemberMonth));
     }
+    setTimeout(() => { isLoading.current = false; }, 100);
   }, [name, month]);
+
+  // Auto-save: debounce 500ms after any data change
+  useEffect(() => {
+    if (isLoading.current) return;
+    if (saveTimer.current) clearTimeout(saveTimer.current);
+    saveTimer.current = setTimeout(() => {
+      const key = getStorageKey(name, month);
+      localStorage.setItem(key, JSON.stringify(data));
+      setSaved(true);
+      setTimeout(() => setSaved(false), 1500);
+    }, 500);
+    return () => { if (saveTimer.current) clearTimeout(saveTimer.current); };
+  }, [data, name, month]);
 
   const save = useCallback(() => {
     const key = getStorageKey(name, month);
@@ -53,10 +68,6 @@ export default function MemberPage() {
     setSaved(true);
     setTimeout(() => setSaved(false), 2000);
   }, [name, month, data]);
-
-  // Proxy handlers that also update goals/monthly in ExcelTable
-  const handleGoalsChange = (goals: MonthlyGoals) => setData({ ...data, goals });
-  const handleMonthlyChange = (monthly: MonthlyManagement) => setData({ ...data, monthly });
 
   if (!MEMBERS.includes(name)) {
     return (
@@ -78,7 +89,7 @@ export default function MemberPage() {
             <MonthSelector value={month} onChange={setMonth} />
           </div>
           <div className="flex items-center gap-3">
-            {saved && <span className="text-sm text-emerald-600 animate-pulse">保存しました</span>}
+            {saved && <span className="text-xs text-emerald-600 animate-pulse">自動保存しました</span>}
             <select
               value={name}
               onChange={(e) => router.push(`/member/${encodeURIComponent(e.target.value)}`)}
@@ -117,27 +128,15 @@ export default function MemberPage() {
           />
         </section>
 
-        {/* Issues Section */}
-        <section className="bg-white rounded-xl shadow-sm border border-gray-200">
-          <div className="p-6 pb-0">
-            <h2 className="text-lg font-semibold text-gray-900 mb-2">目標・結果・課題・改善案</h2>
-          </div>
-          <div className="px-6">
-            <WeekTabs activeWeek={activeWeek} onChange={setActiveWeek} />
-          </div>
-          <div className="p-6">
-            <IssueForm
-              weekIndex={activeWeek}
-              issue={data.issues[activeWeek]}
-              onChange={(issue) => {
-                const issues = [...data.issues];
-                issues[activeWeek] = issue;
-                setData({ ...data, issues });
-              }}
-              memberName={name}
-              allData={data}
-            />
-          </div>
+        {/* Issues Section - Excel style table */}
+        <section className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+          <h2 className="text-lg font-semibold text-gray-900 mb-4">目標・結果・課題・改善案</h2>
+          <IssueTable
+            issues={data.issues}
+            onChange={(issues) => setData({ ...data, issues })}
+            memberName={name}
+            allData={data}
+          />
         </section>
 
         {/* AI Analysis Chat */}
